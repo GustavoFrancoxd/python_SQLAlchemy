@@ -1,6 +1,6 @@
 """ relacion de uno a muchos"""
 from sqlalchemy import (Column, ForeignKey, Integer, String, create_engine)
-from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from sqlalchemy.orm import Mapped, mapped_column, declarative_base, relationship, sessionmaker
 
 db_url = "sqlite:///database.db"
 
@@ -23,8 +23,8 @@ class Address(BaseModel):
     city = Column(String)
     state =Column(String)
     zip_code = Column(Integer)
-    user_id = Column(ForeignKey("users.id")) #llave foranea seria del modelo users y sera la propiedad id (users.id)
-    user = relationship("User", back_populates="addresses") #con esto podemos ver a que usuario esta ligada esta direccion
+    user_id: Mapped[int]= mapped_column(ForeignKey("users.id")) #llave foranea seria del modelo users y sera la propiedad id (users.id)
+    user: Mapped["User"] = relationship(back_populates="addresses") #con esto podemos ver a que usuario esta ligada esta direccion
     
     def __repr__(self):
         return f"<Address(id={self.id}, city='{self.city}')>"
@@ -36,7 +36,7 @@ class User(BaseModel):
     
     name = Column(String)
     age = Column(String)
-    addresses = relationship(Address)
+    addresses: Mapped[list["Address"]] = relationship()
     
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.name}')>"
